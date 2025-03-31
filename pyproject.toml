@@ -41,7 +41,7 @@ dependencies = ["pygithub~=2.6", "rich-click~=1.8", "rich~=14.0"]
   # version to ensure a reproducible developer environment.
   devel = ["repo-manage[devel-test,devel-types]", "ruff==0.11.2"]
 
-  devel-test  = ["coverage[toml]==7.7.0", "pytest-cov==6.0.0", "pytest==8.3.5"]
+  devel-test  = ["coverage[toml]==7.8.0", "pytest-cov==6.0.0", "pytest==8.3.5"]
   devel-types = ["mypy==1.15.0"]
 
   [project.scripts]
