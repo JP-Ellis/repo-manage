@@ -224,6 +224,8 @@ jobs:
 
       - name: Run tests
         run: hatch run test --junit-xml=junit.xml -o junit_family=legacy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload coverage
         if: matrix.python-version == env.STABLE_PYTHON_VERSION && matrix.os == 'ubuntu-latest'
