@@ -1,14 +1,13 @@
 """
-Simple subcommand to display the current version of the application.
+Subcommand to display the current version of the application.
 """
 
-import click
+import rich_click as click
 
 from repo_manage.__version__ import __version__
-from repo_manage.cli import main
 
 
-@main.command()
+@click.command()
 def version() -> None:
     """
     Display the current version of the application.
