@@ -256,6 +256,12 @@ jobs:
           job_summary: true
           report_individual_runs: true
 
+      - name: Upload coverage
+        if: matrix.python-version == env.STABLE_PYTHON_VERSION && matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5.4.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   spelling:
     name: Spell check
 
