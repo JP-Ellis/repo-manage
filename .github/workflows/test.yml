@@ -27,7 +27,7 @@ env:
 
 jobs:
   complete:
-    name: Completion check
+    name: Test completion check
     if: always()
 
     permissions:
