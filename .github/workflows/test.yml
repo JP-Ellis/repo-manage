@@ -23,7 +23,7 @@ env:
   # Python
   HATCH_VERBOSE: '1'
   PYTHONUNBUFFERED: '1'
-  STABLE_PYTHON_VERSION: '3.12'
+  STABLE_PYTHON_VERSION: '3.13'
 
 jobs:
   complete:
