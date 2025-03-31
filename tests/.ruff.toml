@@ -1,0 +1,16 @@
+#:schema https://json.schemastore.org/ruff.json
+extend = "../pyproject.toml"
+
+# Release a number of linting rules which are not required for tests
+[lint]
+ignore = [
+  "D100",    # Required docstring in public module
+  "D103",    # Require docstrings on public functions
+  "D104",    # Require docstring in public package
+  "INP001",  # Forbid implicit namespaces
+  "PLR2004", # Forbid magic numbers
+  "S101",    # Disable assert
+  "SLF001",  # Forbid access to private attributes
+  "TID252",  # Forbid relative imports
+  "TID253",  # Banned module-level imports
+]

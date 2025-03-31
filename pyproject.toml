@@ -1,0 +1,218 @@
+#:schema https://json.schemastore.org/pyproject.json
+################################################################################
+## Project Configuration
+################################################################################
+[project]
+description = "Utility to help manage repositories."
+dynamic     = ["version"]
+name        = "repo-manage"
+
+authors     = [{ name = "JP-Ellis", email = "josh@jpellis.me" }]
+maintainers = [{ name = "JP-Ellis", email = "josh@jpellis.me" }]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python",
+]
+keywords = ["cli", "github", "repository", "utility"]
+license = "MIT"
+readme = "README.md"
+
+requires-python = ">=3.9"
+
+# The versions specified here should be the minimum required versions
+# for the project to work. This will ensure that the project has
+# the broaded possible compatibility.
+dependencies = ["pygithub~=2.6", "rich-click~=1.8", "rich~=14.0"]
+
+  [project.optional-dependencies]
+
+  # All development dependencies should be specified using an exact
+  # version to ensure a reproducible developer environment.
+  devel = ["repo-manage[devel-test,devel-types]", "ruff==0.11.1"]
+
+  devel-test  = ["coverage[toml]==7.7.0", "pytest-cov==6.0.0", "pytest==8.3.5"]
+  devel-types = ["mypy==1.15.0"]
+
+  [project.scripts]
+  repo-manage = "repo_manage.cli:main"
+
+  [project.urls]
+  Documentation = "https://jp-ellis.github.io/repo-manage/"
+  Issues        = "https://github.com/JP-Ellis/repo-manage/issues"
+  Source        = "https://github.com/JP-Ellis/repo-manage"
+
+################################################################################
+## Build System Configuration
+################################################################################
+[build-system]
+build-backend = "hatchling.build"
+requires      = ["hatch-vcs", "hatchling"]
+
+[tool.hatch]
+  [tool.hatch.version]
+  source = "vcs"
+
+  [tool.hatch.build]
+
+    [tool.hatch.build.hooks.vcs]
+    version-file = "src/repo_manage/__version__.py"
+
+    [tool.hatch.build.targets.sdist]
+    include = [
+      # Source
+      "/src/**/*.py",
+      "/src/**/*.pyi",
+      "/src/**/py.typed",
+
+      # Metadata
+      "/LICENSE",
+      "/README.md",
+    ]
+
+    [tool.hatch.build.targets.wheel]
+    include = [
+      # Source
+      "/src/**/*.py",
+      "/src/**/*.pyi",
+      "/src/**/py.typed",
+    ]
+    packages = ["/src/repo_manage"]
+
+  [tool.hatch.envs]
+
+    [tool.hatch.envs.default]
+    features  = ["devel"]
+    installer = "uv"
+
+      [tool.hatch.envs.default.scripts]
+      all = ["format", "lint", "test", "typecheck"]
+
+      format = "ruff format src tests {args}"
+      lint   = "ruff check {args:--output-format full --show-fixes} src tests"
+      test   = "pytest tests/ {args}"
+
+      typecheck       = ["typecheck-src {args}", "typecheck-tests {args}"]
+      typecheck-src   = "mypy src {args}"
+      typecheck-tests = "mypy tests {args}"
+
+    [tool.hatch.envs.test]
+    features  = ["devel-test"]
+    installer = "uv"
+
+      [[tool.hatch.envs.test.matrix]]
+      python = ["3.10", "3.11", "3.12", "3.13", "3.9"]
+
+################################################################################
+## Ruff Configuration
+################################################################################
+[tool.ruff]
+
+extend-exclude = ["src/repo_manage/__version__.py"]
+
+  [tool.ruff.lint]
+  select = ["ALL"]
+
+  ignore = [
+    "A001",   # Forbid assigning built-ins
+    "A002",   # Forbid shadowing built-ins
+    "D200",   # Require single line docstrings to be on one line.
+    "D203",   # Require blank line before class docstring
+    "D212",   # Multi-line docstring summary must start at the first line
+    "FIX002", # Forbid TODO in comments
+    "RUF200", # Validate pyproject.toml (handled by Hatch)
+    "TD002",  # Assign someone to 'TODO' comments
+
+    # The following are disabled for compatibility with the formatter
+    "COM812", # enforce trailing commas
+    "ISC001", # require imports to be sorted
+  ]
+
+    [tool.ruff.lint.extend-per-file-ignores]
+    "*.ipynb" = [
+      "F403",    # star imports
+      "PLE1142", # await-outside-async
+      "T201",    # print
+    ]
+
+    [tool.ruff.lint.isort]
+    known-first-party = ["repo_manage", "tests"]
+
+    [tool.ruff.lint.flake8-tidy-imports]
+    ban-relative-imports = "all"
+
+    [tool.ruff.lint.pydocstyle]
+    convention = "google"
+
+  [tool.ruff.format]
+  preview = true
+
+################################################################################
+## PyTest Configuration
+################################################################################
+[tool.pytest]
+
+  [tool.pytest.ini_options]
+  addopts = [
+    "--cov",
+    "--cov-config=pyproject.toml",
+    "--cov-report=xml",
+    "--import-mode=importlib",
+  ]
+
+################################################################################
+## Mypy Configuration
+################################################################################
+[tool.mypy]
+follow_untyped_imports = true
+plugins                = "pydantic.mypy"
+
+################################################################################
+## Coverage Configuration
+################################################################################
+[tool.coverage]
+
+  [tool.coverage.paths]
+  repo-manage = ["src/repo_manage"]
+  tests       = ["tests"]
+
+  [tool.coverage.report]
+  exclude_also = [
+    "@(abc\\.)?abstractmethod",   # Ignore abstract methods
+    "if TYPE_CHECKING:",          # Ignore typing
+    "if __name__ == .__main__.:", # Ignore non-runnable code
+    "raise NotImplementedError",  # Ignore defensive assertions
+  ]
+
+################################################################################
+## CI Build Wheel
+################################################################################
+[tool.cibuildwheel]
+test-command = "pytest"
+
+################################################################################
+## Typos
+################################################################################
+[tool.typos]
+
+  [tool.typos.default]
+  extend-ignore-re = ["(?Rm)^.*(#|//)\\s*spellchecker:ignore$"]
+
+################################################################################
+## Yamlfix
+################################################################################
+[tool.yamlfix]
+line_length        = 100
+section_whitelines = 1
+sequence_style     = "block_style"
+whitelines         = 1
