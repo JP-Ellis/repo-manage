@@ -124,7 +124,6 @@ jobs:
 
       - name: Lint
         run: hatch run lint --output-format github
-        working-directory: ${{ matrix.d }}
 
   typecheck:
     name: >-
