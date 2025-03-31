@@ -1,0 +1,14 @@
+{
+  "python.testing.pytestArgs": ["tests", "--no-cov"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "ruff.importStrategy": "fromEnvironment",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "cmd": "yamlfix '${file}'",
+        "match": ".*\\.ya?ml$"
+      }
+    ]
+  }
+}
