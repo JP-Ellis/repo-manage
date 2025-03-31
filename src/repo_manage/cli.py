@@ -85,3 +85,4 @@ def main(
 import repo_manage.command  # noqa: E402
 
 main.add_command(repo_manage.command.version)  # type: ignore[arg-type]
+main.add_command(repo_manage.command.list)  # type: ignore[arg-type]
