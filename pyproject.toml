@@ -39,7 +39,7 @@ dependencies = ["pygithub~=2.6", "rich-click~=1.8", "rich~=14.0"]
 
   # All development dependencies should be specified using an exact
   # version to ensure a reproducible developer environment.
-  devel = ["repo-manage[devel-test,devel-types]", "ruff==0.11.3"]
+  devel = ["repo-manage[devel-test,devel-types]", "ruff==0.11.4"]
 
   devel-test = [
     "coverage[toml]==7.8.0",
