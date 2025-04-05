@@ -43,7 +43,7 @@ dependencies = ["pygithub~=2.6", "rich-click~=1.8", "rich~=14.0"]
 
   devel-test = [
     "coverage[toml]==7.8.0",
-    "pytest-cov==6.1.0",
+    "pytest-cov==6.1.1",
     "pytest-mock==3.14.0",
     "pytest==8.3.5",
   ]
