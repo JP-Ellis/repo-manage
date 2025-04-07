@@ -50,9 +50,13 @@ def update(ctx: click.Context) -> None:
                 stderr=None if stream_output else subprocess.PIPE,
             ).strip()
         except subprocess.CalledProcessError as e:
-            if not stream_output:
+            logger.warning(
+                "Failed to fetch default branch for %s: %s",
+                repo_dir.name,
+                e,
+            )
+            if e.stderr:
                 logger.exception("Error output: %s", e.stderr)
-            logger.warning("Failed to fetch default branch: %s", e)
             continue
 
         try:
@@ -64,9 +68,9 @@ def update(ctx: click.Context) -> None:
                 stderr=None if stream_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
-            if not stream_output:
+            logger.warning("Failed to checkout branch of %s: %s", repo_dir.name, e)
+            if e.stderr:
                 logger.exception("Error output: %s", e.stderr)
-            logger.warning("Failed to checkout branch %s: %s", default_branch, e)
             continue
 
         try:
@@ -78,9 +82,11 @@ def update(ctx: click.Context) -> None:
                 stderr=None if stream_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
-            if not stream_output:
-                logger.exception("Error output: %s", e.stderr)
             logger.warning(
-                "Failed to pull updates for repository %s: %s", repo_dir.name, e
+                "Failed to pull updates for repository %s: %s",
+                repo_dir.name,
+                e,
             )
+            if e.stderr:
+                logger.exception("Error output: %s", e.stderr)
             continue
