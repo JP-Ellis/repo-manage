@@ -9,6 +9,7 @@ import pytest
 from click.testing import CliRunner
 
 from repo_manage.cli import main
+from repo_manage.util import find_executable
 
 
 def test_update_success(
@@ -18,8 +19,8 @@ def test_update_success(
     """
     Test the update command with a successful update operation.
     """
-    subprocess.check_call([  # noqa: S603, S607
-        "gh",
+    subprocess.check_call([  # noqa: S603
+        find_executable("gh"),
         "repo",
         "clone",
         "JP-Ellis/repo-manage",
