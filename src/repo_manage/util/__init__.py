@@ -2,16 +2,22 @@
 Utility functions for the repo_manage package.
 """
 
+from __future__ import annotations
+
 import logging
 import os
 import shutil
 import subprocess
 import sys
-from collections.abc import Generator
 from pathlib import Path
+from typing import TYPE_CHECKING, Literal, overload
 
 from github import Auth, Github, UnknownObjectException
-from github.Repository import Repository
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from github.Repository import Repository
 
 logger = logging.getLogger(__name__)
 
@@ -121,3 +127,34 @@ def remote_repositories(
             continue
 
         yield repo
+
+
+@overload
+def find_executable(executable_name: str, *, raises: Literal[True] = True) -> str: ...
+@overload
+def find_executable(executable_name: str, *, raises: Literal[False]) -> str | None: ...
+def find_executable(executable_name: str, *, raises: bool = True) -> str | None:
+    """
+    Locate an executable in the system PATH.
+
+    Args:
+        executable_name:
+            The name of the executable to locate.
+
+        raises:
+            Whether to raise an exception if the executable is not found.
+            If False, return None instead.
+
+    Returns:
+        The path to the executable.
+
+    Raises:
+        FileNotFoundError: If the executable is not found.
+    """
+    if path := shutil.which(executable_name):
+        return path
+
+    if raises:
+        msg = f"Unable to find executable {executable_name!r}."
+        raise FileNotFoundError(msg)
+    return None

@@ -1,11 +1,10 @@
 import logging
-import shutil
 from typing import TYPE_CHECKING
 
 import pytest
 import pytest_mock
 
-from repo_manage.util import github_token
+from repo_manage.util import find_executable, github_token
 
 if TYPE_CHECKING:
     from unittest.mock import MagicMock
@@ -45,6 +44,6 @@ def test_github_token_from_cli(
     token = github_token()
     assert token == "cli-token"  # noqa: S105
     mock.assert_called_once_with(
-        [shutil.which("gh"), "auth", "token"],
+        [find_executable("gh"), "auth", "token"],
         encoding="utf-8",
     )

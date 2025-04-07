@@ -3,13 +3,12 @@ Subcommand for updating repositories.
 """
 
 import logging
-import shutil
 import subprocess
 from typing import TYPE_CHECKING
 
 import rich_click as click
 
-from repo_manage.util import local_repositories
+from repo_manage.util import find_executable, local_repositories
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -28,14 +27,8 @@ def update(ctx: click.Context) -> None:
     and continues with the next repository.
     """
     local: Path = ctx.obj["local"]
-
-    if not (git_exec := shutil.which("git")):
-        logger.error("Git executable not found.")
-        ctx.exit(1)
-
-    if not (gh_exec := shutil.which("gh")):
-        logger.error("GitHub CLI (gh) executable not found.")
-        ctx.exit(1)
+    git_exec = find_executable("git")
+    gh_exec = find_executable("gh")
 
     for repo_dir in local_repositories(local):
         logger.info("Updating repository: %s", repo_dir.name)

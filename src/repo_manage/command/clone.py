@@ -3,13 +3,12 @@ Subcommand for cloning repositories.
 """
 
 import logging
-import shutil
 import subprocess
 from pathlib import Path
 
 import rich_click as click
 
-from repo_manage.util import remote_repositories
+from repo_manage.util import find_executable, remote_repositories
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +39,7 @@ def clone(
     """
     org = ctx.obj["org"]
     current_dir = Path.cwd()
-    if not (gh_exec := shutil.which("gh")):
-        logger.error("GitHub CLI (gh) executable not found.")
-        ctx.exit(1)
+    gh_exec = find_executable("gh")
 
     for repo in remote_repositories(org, forks=forks, archived=archived):
         repo_dir = current_dir / repo.name
