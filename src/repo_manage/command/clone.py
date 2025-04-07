@@ -43,6 +43,7 @@ def clone(
     org: str = ctx.obj["org"]
     local: Path = ctx.obj["local"]
     gh_exec = find_executable("gh")
+    stream_output = logger.getEffectiveLevel() <= logging.DEBUG
 
     for repo in remote_repositories(org, forks=forks, archived=archived):
         repo_dir = local / repo.name
@@ -55,7 +56,11 @@ def clone(
             subprocess.check_call(  # noqa: S603
                 [gh_exec, "repo", "clone", repo.full_name, str(repo_dir)],
                 text=True,
+                stdout=None if stream_output else subprocess.PIPE,
+                stderr=None if stream_output else subprocess.PIPE,
             )
-        except subprocess.SubprocessError:
+        except subprocess.CalledProcessError as e:
+            if not stream_output:
+                logger.exception("Error output: %s", e.stderr)
             logger.exception("Failed to clone repository %s", repo.name)
             ctx.exit(1)

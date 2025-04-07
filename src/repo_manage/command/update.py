@@ -29,6 +29,7 @@ def update(ctx: click.Context) -> None:
     local: Path = ctx.obj["local"]
     git_exec = find_executable("git")
     gh_exec = find_executable("gh")
+    stream_output = logger.getEffectiveLevel() <= logging.DEBUG
 
     for repo_dir in local_repositories(local):
         logger.info("Updating repository: %s", repo_dir.name)
@@ -46,8 +47,11 @@ def update(ctx: click.Context) -> None:
                 ],
                 cwd=repo_dir,
                 text=True,
+                stderr=None if stream_output else subprocess.PIPE,
             ).strip()
         except subprocess.CalledProcessError as e:
+            if not stream_output:
+                logger.exception("Error output: %s", e.stderr)
             logger.warning("Failed to fetch default branch: %s", e)
             continue
 
@@ -56,8 +60,12 @@ def update(ctx: click.Context) -> None:
                 [git_exec, "checkout", default_branch],
                 cwd=repo_dir,
                 text=True,
+                stdout=None if stream_output else subprocess.PIPE,
+                stderr=None if stream_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
+            if not stream_output:
+                logger.exception("Error output: %s", e.stderr)
             logger.warning("Failed to checkout branch %s: %s", default_branch, e)
             continue
 
@@ -66,8 +74,12 @@ def update(ctx: click.Context) -> None:
                 [git_exec, "pull"],
                 cwd=repo_dir,
                 text=True,
+                stdout=None if stream_output else subprocess.PIPE,
+                stderr=None if stream_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
+            if not stream_output:
+                logger.exception("Error output: %s", e.stderr)
             logger.warning(
                 "Failed to pull updates for repository %s: %s", repo_dir.name, e
             )
