@@ -4,11 +4,14 @@ Subcommand for cloning repositories.
 
 import logging
 import subprocess
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import rich_click as click
 
 from repo_manage.util import find_executable, remote_repositories
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -37,12 +40,12 @@ def clone(
     This command clones all repositories from the specified organization or
     user into the current directory. Existing repositories are skipped.
     """
-    org = ctx.obj["org"]
-    current_dir = Path.cwd()
+    org: str = ctx.obj["org"]
+    local: Path = ctx.obj["local"]
     gh_exec = find_executable("gh")
 
     for repo in remote_repositories(org, forks=forks, archived=archived):
-        repo_dir = current_dir / repo.name
+        repo_dir = local / repo.name
         if repo_dir.exists():
             logger.info("Skipping existing repository: %s", repo.name)
             continue
