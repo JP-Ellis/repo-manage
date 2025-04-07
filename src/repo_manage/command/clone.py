@@ -60,7 +60,7 @@ def clone(
                 stderr=None if stream_output else subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
-            if not stream_output:
-                logger.exception("Error output: %s", e.stderr)
             logger.exception("Failed to clone repository %s", repo.name)
+            if e.stderr:
+                logger.exception("Process output: %s", e.stderr)
             ctx.exit(1)
