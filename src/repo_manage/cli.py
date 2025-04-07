@@ -79,7 +79,7 @@ def main(
 
     ctx.ensure_object(dict)
     ctx.obj["org"] = org
-    ctx.obj["local"] = local
+    ctx.obj["local"] = Path(local)
 
 
 import repo_manage.command  # noqa: E402
