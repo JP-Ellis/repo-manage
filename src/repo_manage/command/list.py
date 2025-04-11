@@ -11,7 +11,7 @@ from repo_manage.util import local_repositories, remote_repositories
 logger = logging.getLogger(__name__)
 
 
-@click.command()
+@click.command(name="list")
 @click.option(
     "--local",
     is_flag=True,
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
     help="List remote repositories.",
 )
 @click.pass_context
-def list(
+def list_cmd(
     ctx: click.Context,
     *,
     local: bool,
