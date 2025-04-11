@@ -2,15 +2,26 @@
 Subcommand for listing repositories and pull requests.
 """
 
+from __future__ import annotations
+
 import logging
 import re
+from datetime import datetime
 from typing import Any
 
 import rich_click as click
+from isodate import parse_duration
 from rich.console import Console
 from rich.table import Table
 
 from repo_manage.util import local_repositories, remote_repositories
+
+try:
+    from datetime import UTC
+except ImportError:
+    from datetime import timezone
+
+    UTC = timezone.utc
 
 logger = logging.getLogger(__name__)
 
@@ -81,15 +92,27 @@ def list_cmd(
     multiple=True,
     help="Include authors matching the given regex pattern. Can be repeated.",
 )
+@click.option(
+    "--older-than",
+    type=str,
+    help="Filter PRs older than the given ISO 8601 duration.",
+)
+@click.option(
+    "--newer-than",
+    type=str,
+    help="Filter PRs newer than the given ISO 8601 duration.",
+)
 @click.pass_context
 def list_prs(  # noqa: PLR0913
     ctx: click.Context,
     *,
     include_forks: bool,
     include_archived: bool,
+    author: tuple[str, ...],
     exclude_author: tuple[str, ...],
     include_drafts: bool,
-    author: tuple[str, ...],
+    older_than: str | None,
+    newer_than: str | None,
 ) -> None:
     """
     List all open pull requests for each repository in the organization.
@@ -114,6 +137,13 @@ def list_prs(  # noqa: PLR0913
     exclude_patterns = [re.compile(pattern) for pattern in exclude_author]
     include_patterns = [re.compile(pattern) for pattern in author]
 
+    older_than_date: datetime | None = (
+        datetime.now(tz=UTC) - parse_duration(older_than) if older_than else None
+    )
+    newer_than_date: datetime | None = (
+        datetime.now(tz=UTC) - parse_duration(newer_than) if newer_than else None
+    )
+
     for repo in remote_repositories(
         org,
         forks=include_forks,
@@ -137,6 +167,16 @@ def list_prs(  # noqa: PLR0913
                     "Excluding PR #%s by author not matching: %s",
                     pr.number,
                     pr.user.login,
+                )
+                continue
+
+            if older_than_date and pr.created_at > older_than_date:
+                logger.info("Excluding PR #%s created after older-than date", pr.number)
+                continue
+
+            if newer_than_date and pr.created_at < newer_than_date:
+                logger.info(
+                    "Excluding PR #%s created before newer-than date", pr.number
                 )
                 continue
 

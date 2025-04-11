@@ -33,7 +33,12 @@ requires-python = ">=3.9"
 # The versions specified here should be the minimum required versions
 # for the project to work. This will ensure that the project has
 # the broaded possible compatibility.
-dependencies = ["pygithub~=2.6", "rich-click~=1.8", "rich~=14.0"]
+dependencies = [
+  "isodate~=0.7.0",
+  "pygithub~=2.6",
+  "rich-click~=1.8",
+  "rich~=14.0",
+]
 
   [project.optional-dependencies]
 
