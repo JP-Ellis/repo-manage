@@ -12,6 +12,7 @@ from typing import Any
 import rich_click as click
 from isodate import parse_duration
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.table import Table
 
 from repo_manage.util import local_repositories, remote_repositories
@@ -54,16 +55,19 @@ def list_cmd(
         logger.error("Please specify either --local or --remote.")
         ctx.exit(1)
 
+    console = Console()
     if local:
         for repo_path in local_repositories(ctx.obj["local"]):
-            click.echo(repo_path.relative_to(ctx.obj["local"]))
+            console.print(repo_path.relative_to(ctx.obj["local"]))
 
     if remote:
         for repo in remote_repositories(ctx.obj["org"]):
+            repo_link = f"[{repo.full_name}](https://github.com/{repo.full_name})"
             if repo.fork:
-                click.echo(repo.full_name + " (fork of: " + repo.parent.full_name + ")")
+                fork_link = f"[{repo.parent.full_name}](https://github.com/{repo.parent.full_name})"
+                console.print(Markdown(f"{repo_link} (fork of: {fork_link})"))
             else:
-                click.echo(repo.full_name)
+                console.print(Markdown(repo_link))
 
 
 @click.command()
@@ -190,8 +194,11 @@ def list_prs(  # noqa: PLR0913
 
     data.sort(key=lambda x: x["created_at"], reverse=True)
     for row in data:
+        # TODO: Replace with Markdown once Rich supports it
+        # https://github.com/Textualize/rich/issues/3537
+        pr_link = f"[link=https://github.com/{row['repo']}/pull/{row['number']}]{row['repo']}#{row['number']}[/link]"
         table.add_row(
-            f"{row['repo']}#{row['number']}",
+            pr_link,
             row["title"],
             row["author"],
             row["created_at"].strftime("%Y-%m-%d"),
