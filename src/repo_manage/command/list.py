@@ -1,10 +1,14 @@
 """
-Subcommand for listing repositories.
+Subcommand for listing repositories and pull requests.
 """
 
 import logging
+import re
+from typing import Any
 
 import rich_click as click
+from rich.console import Console
+from rich.table import Table
 
 from repo_manage.util import local_repositories, remote_repositories
 
@@ -49,3 +53,108 @@ def list_cmd(
                 click.echo(repo.full_name + " (fork of: " + repo.parent.full_name + ")")
             else:
                 click.echo(repo.full_name)
+
+
+@click.command()
+@click.option(
+    "--include-forks/--exclude-forks",
+    default=True,
+    help="Include or exclude forked repositories (default: include).",
+)
+@click.option(
+    "--include-archived/--exclude-archived",
+    default=False,
+    help="Include or exclude archived repositories (default: exclude).",
+)
+@click.option(
+    "--exclude-author",
+    multiple=True,
+    help="Exclude authors matching the given regex pattern. Can be repeated.",
+)
+@click.option(
+    "--include-drafts/--exclude-drafts",
+    default=False,
+    help="Include or exclude draft pull requests (default: exclude).",
+)
+@click.option(
+    "--author",
+    multiple=True,
+    help="Include authors matching the given regex pattern. Can be repeated.",
+)
+@click.pass_context
+def list_prs(  # noqa: PLR0913
+    ctx: click.Context,
+    *,
+    include_forks: bool,
+    include_archived: bool,
+    exclude_author: tuple[str, ...],
+    include_drafts: bool,
+    author: tuple[str, ...],
+) -> None:
+    """
+    List all open pull requests for each repository in the organization.
+
+    This command iterates over all repositories and gathers open PRs,
+    displaying them in a Markdown-styled table.
+    """
+    org: str = ctx.obj["org"]
+    console = Console()
+
+    table = Table(
+        title="Open Pull Requests",
+        show_header=True,
+        header_style="bold magenta",
+    )
+    table.add_column("PR", no_wrap=True)
+    table.add_column("Title", overflow="ellipsis")
+    table.add_column("Author")
+    table.add_column("Created")
+    data: list[dict[str, Any]] = []
+
+    exclude_patterns = [re.compile(pattern) for pattern in exclude_author]
+    include_patterns = [re.compile(pattern) for pattern in author]
+
+    for repo in remote_repositories(
+        org,
+        forks=include_forks,
+        archived=include_archived,
+    ):
+        logger.info("Fetching PRs for repository: %s", repo.name)
+
+        for pr in repo.get_pulls(state="open", sort="created"):
+            if not include_drafts and pr.draft:
+                logger.info("Excluding draft PR #%s", pr.number)
+                continue
+
+            if any(pattern.search(pr.user.login) for pattern in exclude_patterns):
+                logger.info("Excluding PR #%s by author: %s", pr.number, pr.user.login)
+                continue
+
+            if author and not any(
+                pattern.search(pr.user.login) for pattern in include_patterns
+            ):
+                logger.info(
+                    "Excluding PR #%s by author not matching: %s",
+                    pr.number,
+                    pr.user.login,
+                )
+                continue
+
+            data.append({
+                "number": pr.number,
+                "repo": pr.base.repo.full_name,
+                "title": pr.title,
+                "author": pr.user.login,
+                "created_at": pr.created_at,
+            })
+
+    data.sort(key=lambda x: x["created_at"], reverse=True)
+    for row in data:
+        table.add_row(
+            f"{row['repo']}#{row['number']}",
+            row["title"],
+            row["author"],
+            row["created_at"].strftime("%Y-%m-%d"),
+        )
+
+    console.print(table)
