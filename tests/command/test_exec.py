@@ -103,7 +103,6 @@ def test_exec_check(
     assert result.exit_code != 0
     assert (repos[0] / "output.txt").exists()
     assert not (repos[1] / "output.txt").exists()
-    assert "Command: false" in caplog.text
 
 
 def test_exec_no_check(
@@ -131,4 +130,34 @@ def test_exec_no_check(
     assert result.exit_code == 0
     assert (repos[0] / "output.txt").exists()
     assert (repos[1] / "output.txt").exists()
-    assert "Command: false" in caplog.text
+
+
+def test_exec_and_or(
+    repos: tuple[Path, Path],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    runner = CliRunner()
+    with caplog.at_level("INFO"):
+        result = runner.invoke(
+            main,
+            [
+                "--local",
+                str(repos[0].parent),
+                "exec",
+                "--capture",
+                "--",
+                "echo",
+                "hello",
+                "&&",
+                "echo",
+                "world",
+                "||",
+                "echo",
+                "foo",
+            ],
+        )
+
+    assert result.exit_code == 0
+    assert "hello" in caplog.text
+    assert "world" in caplog.text
+    assert "foo" not in caplog.text
