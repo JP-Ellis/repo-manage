@@ -34,6 +34,7 @@ requires-python = ">=3.9"
 # for the project to work. This will ensure that the project has
 # the broadest possible compatibility.
 dependencies = [
+  "click-option-group~=0.5.0",
   "isodate~=0.7.0",
   "pygithub~=2.6",
   "rich-click~=1.8",

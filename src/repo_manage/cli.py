@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 
 import rich_click as click
+from click_option_group import MutuallyExclusiveOptionGroup, optgroup
 from rich.logging import RichHandler
 
 logger = logging.getLogger(__name__)
@@ -33,8 +34,16 @@ def setup_logging(verbose: int, quiet: int) -> None:
 
 
 @click.group()
-@click.option("-v", "--verbose", is_flag=True, help="Increase verbosity.")
-@click.option("-q", "--quiet", is_flag=True, help="Decrease verbosity.")
+@optgroup.group("Logging Options", cls=MutuallyExclusiveOptionGroup)
+@optgroup.option(
+    "-v",
+    "--verbose",
+    count=True,
+    help="Increase verbosity. Can be used multiple times.",
+)
+@optgroup.option(
+    "-q", "--quiet", count=True, help="Decrease verbosity. Can be used multiple times."
+)
 @click.option(
     "--org",
     type=str,
