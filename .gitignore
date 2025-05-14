@@ -3,7 +3,7 @@
 ################################################################################
 
 # The version file is automatically generated
-/src/repo-manage/__version__.py
+/src/repo_manage/__version__.py
 
 ################################################################################
 ## Standard Templates
