@@ -247,7 +247,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - name: Spell Check Repo
-        uses: crate-ci/typos@e99b2b47d9910ae09f6e828594c33ab3e0936491  # v1.33.0
+        uses: crate-ci/typos@b1ae8d918b6e85bd611117d3d9a3be4f903ee5e4  # v1.33.1
 
   pre-commit:
     name: Pre-commit
