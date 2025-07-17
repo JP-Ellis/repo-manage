@@ -45,7 +45,7 @@ dependencies = [
 
   # All development dependencies should be specified using an exact
   # version to ensure a reproducible developer environment.
-  devel = ["repo-manage[devel-test,devel-types]", "ruff==0.12.3"]
+  devel = ["repo-manage[devel-test,devel-types]", "ruff==0.12.4"]
 
   devel-test = [
     "coverage[toml]==7.9.2",
