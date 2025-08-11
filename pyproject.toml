@@ -48,7 +48,7 @@ dependencies = [
   devel = ["repo-manage[devel-test,devel-types]", "ruff==0.12.8"]
 
   devel-test = [
-    "coverage[toml]==7.10.2",
+    "coverage[toml]==7.10.3",
     "pytest-cov==6.2.1",
     "pytest-mock==3.14.1",
     "pytest==8.4.1",
