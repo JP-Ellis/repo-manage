@@ -50,7 +50,7 @@ dependencies = [
   devel-test = [
     "coverage[toml]==7.10.6",
     "pytest-cov==6.3.0",
-    "pytest-mock==3.14.1",
+    "pytest-mock==3.15.0",
     "pytest==8.4.2",
   ]
   devel-types = ["mypy==1.17.1"]
