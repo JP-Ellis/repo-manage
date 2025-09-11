@@ -142,29 +142,48 @@ def test_parse_nested_braces() -> None:
 
 
 def test_parse_empty_command() -> None:
-    with pytest.raises(ValueError, match="No command provided."):
+    with pytest.raises(
+        ValueError,
+        match=r"^No command provided\.$",
+    ):
         Cmd.parse([])
 
 
 def test_parse_unmatched_group() -> None:
-    with pytest.raises(ValueError, match="Unmatched opening parenthesis."):
+    with pytest.raises(
+        ValueError,
+        match=r"^Unmatched opening parenthesis\.$",
+    ):
         Cmd.parse(["echo", "hello", ";", "("])
 
-    with pytest.raises(ValueError, match="Unmatched opening brace."):
+    with pytest.raises(
+        ValueError,
+        match=r"^Unmatched opening brace\.$",
+    ):
         Cmd.parse(["echo", "hello", ";", "{"])
 
-    with pytest.raises(ValueError, match="Unmatched closing parenthesis or brace."):
+    with pytest.raises(
+        ValueError,
+        match=r"^Unmatched closing parenthesis or brace\.$",
+    ):
         Cmd.parse(["echo", "hello", ")"])
 
-    with pytest.raises(ValueError, match="Unmatched closing parenthesis or brace."):
+    with pytest.raises(
+        ValueError,
+        match=r"^Unmatched closing parenthesis or brace\.$",
+    ):
         Cmd.parse(["echo", "hello", "}"])
 
 
 def test_parse_arg_before_group() -> None:
-    with pytest.raises(ValueError, match="Unexpected argument before opening brace."):
+    with pytest.raises(
+        ValueError,
+        match=r"^Unexpected argument before opening brace.",
+    ):
         Cmd.parse(["echo", "hello", "{"])
 
     with pytest.raises(
-        ValueError, match="Unexpected argument before opening parenthesis."
+        ValueError,
+        match=r"^Unexpected argument before opening parenthesis\.$",
     ):
         Cmd.parse(["echo", "hello", "("])
