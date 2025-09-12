@@ -53,7 +53,7 @@ dependencies = [
     "pytest-mock==3.15.0",
     "pytest==8.4.2",
   ]
-  devel-types = ["mypy==1.17.1"]
+  devel-types = ["mypy==1.18.1"]
 
   [project.scripts]
   repo-manage = "repo_manage.cli:main"
