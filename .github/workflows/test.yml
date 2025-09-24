@@ -260,16 +260,32 @@ jobs:
       - name: Cache prek
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
-          path: |
-            $HOME/.cache/prek
-          key: ${{ runner.os }}-prek-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: |-
+            ~/.cache/prek
+          key: >-
+            ${{ runner.os }}-prek-${{
+              hashFiles(
+                '**/.pre-commit-config.yaml',
+                '**/.pre-commit-config.yml'
+              ) }}
+          restore-keys: |-
+            ${{ runner.os }}-prek-
+            ${{ runner.os }}-
 
       - name: Set up uv
         uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4  # v6.7.0
         with:
           enable-cache: true
           cache-suffix: prek
-          cache-dependency-glob: ''
+          cache-dependency-glob: |-
+            **/.pre-commit-config.yaml
+            **/.pre-commit-config.yml
+            **/*requirements*.txt
+            **/*requirements*.in
+            **/*constraints*.txt
+            **/*constraints*.in
+            **/pyproject.toml
+            **/uv.lock
 
       - name: Install prek
         run: uv tool install prek
