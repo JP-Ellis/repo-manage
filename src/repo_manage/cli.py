@@ -41,8 +41,11 @@ def setup_logging(verbose: int, quiet: int) -> None:
     count=True,
     help="Increase verbosity. Can be used multiple times.",
 )
-@optgroup.option(
-    "-q", "--quiet", count=True, help="Decrease verbosity. Can be used multiple times."
+@optgroup.option(  # type: ignore[arg-type]
+    "-q",
+    "--quiet",
+    count=True,
+    help="Decrease verbosity. Can be used multiple times.",
 )
 @click.option(
     "--org",
