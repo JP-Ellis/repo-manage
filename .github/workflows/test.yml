@@ -82,15 +82,7 @@ jobs:
 
       - name: Format
         run: |
-          if ! hatch run format --check ; then
-            {
-              echo "## Formatting changes"
-              echo '```diff'
-              NO_COLOR=1 FORCE_COLOR= hatch run format --diff
-              echo '```'
-            } >>"$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
+          hatch run format --check --output-format github
 
   lint:
     name: >-
