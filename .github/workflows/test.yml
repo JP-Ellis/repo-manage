@@ -156,30 +156,7 @@ jobs:
         run: uv tool install hatch
 
       - name: Typecheck
-        run: |
-          while IFS=$'\n' read -r line || ! retval=$line; do
-            if ! echo "$line" | jq -e . 2>/dev/null 1>&2; then
-              continue
-            fi
-
-            file=$(echo "$line" | jq -r '.file')
-            line_number=$(echo "$line" | jq -r '.line')
-            column=$(echo "$line" | jq -r '.column')
-            message=$(echo "$line" | jq -r '.message')
-            code=$(echo "$line" | jq -r '.code')
-            severity=$(echo "$line" | jq -r '.severity')
-
-            if [ "$severity" == "error" ]; then
-              echo "::error file=$file,line=$line_number,col=$column,title=$code::$message"
-            else
-              echo "::notice file=$file,line=$line_number,col=$column,title=$code::$message"
-            fi
-          done < <(
-            hatch run typecheck --output json
-            printf '%s' "$?"
-          )
-
-          hatch run typecheck 2>/dev/null 1>&2
+        run: hatch run typecheck
 
   test:
     name: >-
