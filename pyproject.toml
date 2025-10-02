@@ -105,6 +105,7 @@ requires      = ["hatch-vcs", "hatchling"]
     [tool.hatch.envs.default]
     features  = ["devel"]
     installer = "uv"
+    path      = ".venv"
 
       [tool.hatch.envs.default.scripts]
       all = ["format", "lint", "test", "typecheck"]
