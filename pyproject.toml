@@ -38,7 +38,7 @@ dependencies = [
   "isodate~=0.7.0",
   "pygithub~=2.6",
   "rich-click~=1.8",
-  "rich~=14.0",
+  "rich~=15.0",
 ]
 
   [project.optional-dependencies]
