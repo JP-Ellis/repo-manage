@@ -23,7 +23,7 @@ env:
   # Python
   HATCH_VERBOSE: '1'
   PYTHONUNBUFFERED: '1'
-  STABLE_PYTHON_VERSION: '3.13'
+  STABLE_PYTHON_VERSION: '3.14'
 
 jobs:
   complete:
@@ -166,9 +166,7 @@ jobs:
           - macos-latest
         python-version:
           - '3.10'
-          - '3.11'
-          - '3.12'
-          - '3.13'
+          - '3.14'
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
