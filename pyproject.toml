@@ -50,7 +50,7 @@ dependencies = [
 
 [dependency-groups]
 devel = [
-  "ruff==0.15.22",
+  "ruff==0.16.1",
   { include-group = "test" },
   { include-group = "types" },
 ]
@@ -158,6 +158,7 @@ build-backend = "hatchling.build"
     ignore = [
       "A001",  # Forbid assigning built-ins
       "A002",  # Forbid shadowing built-ins
+      "CPY001",  # Require a copyright notice at the top of each file
       "D200",  # Require single line docstrings to be on one line.
       "D203",  # Require blank line before class docstring
       "D212",  # Multi-line docstring summary must start at the first line
