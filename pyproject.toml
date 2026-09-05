@@ -50,7 +50,7 @@ dependencies = [
 
 [dependency-groups]
 devel = [
-  "ruff==0.16.5",
+  "ruff==0.16.6",
   { include-group = "test" },
   { include-group = "types" },
 ]
